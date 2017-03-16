@@ -99,7 +99,7 @@ int searchKey(vector<int> &vector_int, const int key)
 
 void print(const int key)
 {
-	cout << key;
+	cout << key << endl;
 }
 
 void test_search() {
