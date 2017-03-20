@@ -109,19 +109,19 @@ int binary_search_helper(const  vector<int>& v, size_t begin, size_t end, int ke
 	return -1;
 }
 
-int binary_search(const  vector<int>& v, size_t begin, size_t end, int key)
+int binary_search_helper_limited_rec(const  vector<int>& v, size_t begin, size_t end, int key, size_t depth = 0)
 {
+	assert(depth < 1000);
 	assert(std::is_sorted(v.begin(), v.end()));
-
 	if (begin < end) {
 		// [b, e) = [b, m) U [m] [m + 1, e)
 		size_t m = (begin + end) / 2;
 		assert((m - begin) + (end - m) == (end - begin));
 		if (key < v[m]) {
-			return binary_search_helper(v, begin, m, key);
+			return binary_search_helper_limited_rec(v, begin, m, key, depth + 1);
 		}
 		else if (v[m] < key) {
-			return binary_search_helper(v, m + 1, end, key);
+			return binary_search_helper_limited_rec(v, m + 1, end, key, depth + 1);
 		}
 		else {
 			return m;
@@ -139,7 +139,7 @@ int binary_search_loop(const  vector<int>& v, int key)
 	if (begin == end) return -1;
 
 	while (begin < end) {
-		// [b, e) = [b, m) U [m] [m + 1, e)
+		//[b, e) = [b, m) U [m] [m + 1, e)
 		//size_t m = (begin + end) / 2;
 		//size_t m = begin + (end - begin) / 2;
 		size_t m = begin + (end - begin) >> 1;
