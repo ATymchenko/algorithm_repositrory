@@ -88,38 +88,73 @@ int search_3(std::vector<int>& v, int key) {
 	return -1;
 }
 
-int binary_search_helper
-(
-const  vector<int>& v,
-size_t begin,
-size_t end,
-int key
-)
+int binary_search_helper(const  vector<int>& v, size_t begin, size_t end, int key)
 {
 	assert(std::is_sorted(v.begin(), v.end()));
 
-	if (begin == end) return -1;
-	if (end - begin == 1) {
-		if (v[begin] == key)
-			return begin;
-		else
-			return -1;
+	if (begin < end) {
+		// [b, e) = [b, m) U [m] [m + 1, e)
+		size_t m = (begin + end) / 2;
+		assert((m - begin) + (end - m) == (end - begin));
+		if (key < v[m]) {
+			return binary_search_helper(v, begin, m, key);
+		}
+		else if (v[m] < key) {
+			return binary_search_helper(v, m + 1, end, key);
+		}
+		else {
+			return m;
+		}
 	}
-
-	// [b, e) = [b, m) U [m, e)
-	size_t m = (begin + end) / 2;
-	assert((m - begin) + (end - m) == (end - begin));
-	if (key < v[m]) {
-		return binary_search_helper(v, begin, m, key);
-	}
-	else if (v[m] < key) {
-		return binary_search_helper(v, m, end, key);
-	}
-	else {
-		return m;
-	}
+	return -1;
 }
 
+int binary_search(const  vector<int>& v, size_t begin, size_t end, int key)
+{
+	assert(std::is_sorted(v.begin(), v.end()));
+
+	if (begin < end) {
+		// [b, e) = [b, m) U [m] [m + 1, e)
+		size_t m = (begin + end) / 2;
+		assert((m - begin) + (end - m) == (end - begin));
+		if (key < v[m]) {
+			return binary_search_helper(v, begin, m, key);
+		}
+		else if (v[m] < key) {
+			return binary_search_helper(v, m + 1, end, key);
+		}
+		else {
+			return m;
+		}
+	}
+	return -1;
+}
+
+int binary_search_loop(const  vector<int>& v, int key)
+{
+	assert(std::is_sorted(v.begin(), v.end()));
+	size_t begin = 0;
+	size_t end = v.size();
+
+	if (begin == end) return -1;
+
+	while (begin < end) {
+		// [b, e) = [b, m) U [m] [m + 1, e)
+		//size_t m = (begin + end) / 2;
+		//size_t m = begin + (end - begin) / 2;
+		size_t m = begin + (end - begin) >> 1;
+		if (key < v[m]) {
+			end = m;
+		}
+		else if (v[m] < key) {
+			begin = m + 1;
+		}
+		else {
+			return m;
+		}
+	}
+	return -1;
+}
 void test_search() {
 
 	typedef vector<int> Array;
@@ -156,7 +191,6 @@ void test_binary_search()
 	// degenarated
 	test(-1, search, Array(), 0, 0, key);
 	// trivial 
-	test(-1, search, Array({ 1 }), 0, 1, key);
 	test(-1, search, Array({ 100 }), 0, 1, key);
 	test(0, search, Array({ 8 }), 0, 1, key);
 	// and 2nd trivial
@@ -177,7 +211,7 @@ void test_binary_search()
 	//more tham one key
 	test(1, search, Array({ key, key }), 0, 2, key);
 	test(2, search, Array({ 1, 2, key, key }), 0, 4, key);
-	test(3, search, Array({ 1, 2, 3, key, key }), 0, 5, key);
+	test(4, search, Array({ 1, 2, 3, key, key }), 0, 5, key);
 	test(1, search, Array({ key, key, key + 1 }), 0, 3, key);
 	test(1, search, Array({ key, key, key + 1, key + 10 }), 0, 4, key);
 }
