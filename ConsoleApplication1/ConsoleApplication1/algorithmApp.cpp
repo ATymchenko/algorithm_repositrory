@@ -32,7 +32,7 @@ void test(TResult expect, TFunc f, TParam1 p1, TParam2 p2) {
 
 template <class TFunc, class TResult, class TParam1, class TParam2, class TParam3, class TParam4>
 void test(TResult expect, TFunc f, TParam1 p1, TParam2 p2, TParam3 p3, TParam4 p4) {
-	auto got = f(p1, p3, p4, p2);
+	auto got = f(p1, p2, p3, p4);
 	if (got != expect) {
 		cerr << "failed: f(" << p1 << ", " << p2 << ") = "
 			<< got << " != " << expect << endl;
@@ -154,35 +154,32 @@ void test_binary_search()
 	typedef vector<int> Array;
 	auto key = 8;
 	// degenarated
-	//test(-1, search, Array(), 0, Array().size(), key);
+	test(-1, search, Array(), 0, 0, key);
 	// trivial 
-	//test(-1, search, Array({ 1 }) , 0, Array().size()  , key);
-	//test(-1, search, Array({ 100 }), 0, Array().size(), key);
-	//test(0, search, Array({ 42 }), 0, Array().size(), key);
-	//// and 2nd trivial
-	//test(-1, search, Array({ 1, 2 }), 0, Array().size(), key);
-	//test(1, search, Array({ 1, 42 }), 0, Array().size(), key);
-	//test(0, search, Array({ 42, 100 }), 0, Array().size(), key);
-	//// key not in array
-	//test(-1, search, Array({ 1, 2, 3, 5, 41 }), 0, Array().size(), key);
-	//test(-1, search, Array({ 43, 45, 67, 100 }), 0, Array().size(), key);
-	test(-1, search, Array({ 3, 5, 41, 43, 45, 67 }), 0, Array().size(), key);
-	//// key in array
-	//test(3, search, Array({ 1, 2, 5, 42 }), 0, Array().size(), key);
-	//test(0, search, Array({ 42, 45, 67, 100 }), 0, Array().size(), key);
-	//test(3, search, Array({ 3, 5, 41, 42, 45, 67 }), 0, Array().size(), key);
-	//// binary search specific:
-	//test(3, search, Array({ 3, 5, 41, 42, 45, 67 }), 0, Array().size(), key);
-	//test(2, search, Array({ 3, 5, 42, 45, 67 }), 0, Array().size(), key);
-
-	// more tham one key
-	// test(1, search, Array({key, key}), 0, Array().size(), key);
-
-	// test(3, search, Array({1,2, key, key}), 0, Array().size(), key);
-	// test(4, search, Array({1,2,3, key, key}), 0, Array().size(), key);
-
-	// test(1, search, Array({key, key, key+1}), 0, Array().size(), key);
-	// test(1, search, Array({key, key, key+1, key+10}), 0, Array().size(), key);
+	test(-1, search, Array({ 1 }), 0, 1, key);
+	test(-1, search, Array({ 100 }), 0, 1, key);
+	test(0, search, Array({ 8 }), 0, 1, key);
+	// and 2nd trivial
+	test(-1, search, Array({ 1, 2 }), 0, 2, key);
+	test(1, search, Array({ 1, 8 }), 0, 2, key);
+	test(0, search, Array({ 8, 100 }), 0, 2, key);
+	// key not in array
+	test(-1, search, Array({ 1, 2, 3, 5, 41 }), 0, 5, key);
+	test(-1, search, Array({ 43, 45, 67, 100 }), 0, 4, key);
+	test(-1, search, Array({ 3, 5, 41, 43, 45, 67 }), 0, 6, key);
+	// key in array
+	test(3, search, Array({ 1, 2, 5, 8 }), 0, 4, key);
+	test(0, search, Array({ 8, 45, 67, 100 }), 0, 4, key);
+	test(3, search, Array({ 3, 5, 7, 8, 45, 67 }), 0, 6, key);
+	// binary search specific:
+	test(3, search, Array({ 3, 5, 7, 8, 45, 67 }), 0, 6, key);
+	test(2, search, Array({ 3, 5, 8, 45, 67 }), 0, 5, key);
+	//more tham one key
+	test(1, search, Array({ key, key }), 0, 2, key);
+	test(2, search, Array({ 1, 2, key, key }), 0, 4, key);
+	test(3, search, Array({ 1, 2, 3, key, key }), 0, 5, key);
+	test(1, search, Array({ key, key, key + 1 }), 0, 3, key);
+	test(1, search, Array({ key, key, key + 1, key + 10 }), 0, 4, key);
 }
 
 int main(int argc, char const *argv[])
