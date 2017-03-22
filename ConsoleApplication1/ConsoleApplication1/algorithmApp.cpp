@@ -39,7 +39,6 @@ void test(TResult expect, TFunc f, TParam1 p1, TParam2 p2, TParam3 p3, TParam4 p
 	}
 }
 
-
 int search_0(int v[], size_t size, int key) {
 	for (int i = 0; i < size; ++i) {
 		if (v[i] == key) {
@@ -155,19 +154,53 @@ int binary_search_loop(const  vector<int>& v, int key)
 	}
 	return -1;
 }
+
+template <class TIter, class T>
+TIter my_lower_bound(TIter b, TIter e, const T& k)
+{
+	assert(b <= e && std::is_sorted(b, e));
+	while (b < e) {
+		TIter m = b + (e - b) / 2;
+		if (*m < k) {
+			b = m + 1;
+		}
+		else e = m;
+	}
+	return b;
+}
+
+template <class TIter, class T>
+TIter binary_search_lower_bound1(TIter b,TIter e,const T& key) {
+	auto lb = lower_bound(b, e, key);
+	return b != e && !(key<*lb)?lb:e;
+}
+
+template <class TInt>
+TInt binary_search_lower_bound(const vector<TInt>& v, TInt k) {
+	auto b = v.begin();
+	auto e = v.end();
+	auto m = my_lower_bound(b, e, k);
+	if (!(k < *m)) return *m;
+	return *e;
+}
+
 void test_search() {
 
 	typedef vector<int> Array;
+	auto search = [](const vector<int>& v, int key) {
+		auto r = binary_search_lower_bound1(v.begin(), v.end(), key);
+		return r != v.end() ? r - v.begin() : -1;
+	};
 
-	auto search = search_2;
+	//auto search = search_2;
 
 	auto key = 8;
 	// key not exists in array
 	test(-1, search, Array(), key); // degenarated
 	test(-1, search, Array({ key - 1 }), key); // trivial
 	test(-1, search, Array({ key - 1, key + 1 }), key); // trivial2
-	test(-1, search, Array({ 1, 2, 3, 4, 5, 7 }), key); // general
-	test(-1, search, Array({ 9, 10, 11, 12 }), key); // general
+	test(-1, search, Array({ 1, 2, 3, 4, 5, 7,10 }), key); // general
+	test(-1, search, Array({ 7 ,9, 10, 11, 12 }), key); // general
 	test(-1, search, Array({ 4, 1, 2, 7, 10 }), key); // general
 	// key exists in array
 	// non appliable // degenarated
@@ -181,7 +214,6 @@ void test_search() {
 	test(0, search, Array({ key, 1, key, 7, 10 }), key); // general                
 	test(2, search, Array({ 2, 1, key, 7, key }), key); // general                
 }
-
 
 void test_binary_search()
 {
@@ -216,10 +248,17 @@ void test_binary_search()
 	test(1, search, Array({ key, key, key + 1, key + 10 }), 0, 4, key);
 }
 
+
+
+
 int main(int argc, char const *argv[])
 {
 	test_search();
 	typedef std::vector<int> Array;
 	test_binary_search();
+
+	//const vector<int> v({ 1 ,2, 3, 4, 5, 6, 8, 9 });
+	//cout << binary_search_lower_bound(v, 8);
+
 	return 0;
 }
