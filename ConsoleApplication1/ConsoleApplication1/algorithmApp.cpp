@@ -170,9 +170,9 @@ TIter my_lower_bound(TIter b, TIter e, const T& k)
 }
 
 template <class TIter, class T>
-TIter binary_search_lower_bound1(TIter b,TIter e,const T& key) {
+TIter binary_search_lower_bound1(TIter b, TIter e, const T& key) {
 	auto lb = my_lower_bound(b, e, key);
-	return b != e && !(key<*lb)?lb:e;
+	return b != e && !(key < *lb) ? lb : e;
 }
 
 template <class TInt>
@@ -262,7 +262,32 @@ TIter min_element1(TIter b, TIter e) {
 	return result;
 }
 
+template<class TIter>
+void naive_sort(TIter b, TIter e) {
+	for (auto i = b; i < e; ++i) {
+		assert(is_sorted(b, i));
+		//[sorted) U [unsorted) = [b, i) U [i e)
+		for (auto j = i + 1; j < e; ++j) {
+			//[unsorted) = [i] U [i+1,j) U [j e)
+			assert(min_element(i, j) == i);
 
+			if (*j < *i) {
+				swap(*i, *j);
+			}
+		}
+		assert(is_sorted(b, i + 1));
+	}
+}
+
+template<class TIter>
+void selection_sort(TIter b, TIter e) {
+	for (auto i = b; i < e - 1; ++i) {
+		assert(is_sorted(b, i));
+		//[sorted) U [unsorted) = [b, i) U [i e)
+		swap(*i, *min_element1(i, e));
+	}
+	assert(is_sorted(b, i + 1));
+}
 
 int main(int argc, char const *argv[])
 {
