@@ -265,28 +265,51 @@ TIter min_element1(TIter b, TIter e) {
 template<class TIter>
 void naive_sort(TIter b, TIter e) {
 	for (auto i = b; i < e; ++i) {
-		assert(is_sorted(b, i));
+		assert(std::is_sorted(b, i));
 		//[sorted) U [unsorted) = [b, i) U [i e)
 		for (auto j = i + 1; j < e; ++j) {
 			//[unsorted) = [i] U [i+1,j) U [j e)
-			assert(min_element(i, j) == i);
+			assert(std::min_element(i, j) == i);
 
 			if (*j < *i) {
 				swap(*i, *j);
 			}
 		}
-		assert(is_sorted(b, i + 1));
+		assert(std::is_sorted(b, i + 1));
 	}
 }
 
 template<class TIter>
-void selection_sort(TIter b, TIter e) {
+void selection_sort1(TIter b, TIter e) {
 	for (auto i = b; i < e - 1; ++i) {
-		assert(is_sorted(b, i));
+		assert(std::is_sorted(b, i));
 		//[sorted) U [unsorted) = [b, i) U [i e)
 		swap(*i, *min_element1(i, e));
+		assert(std::is_sorted(b, i + 1));
 	}
-	assert(is_sorted(b, i + 1));
+}
+
+void test_select_sort() {
+
+	typedef vector<int> Array;
+	auto sort = [](const vector<int>& v, int key) {
+		auto u = v;
+		selection_sort1(u.begin(), u.end());
+		return u;
+	};
+
+	test(Array(), sort, Array());//degenerate
+	test(Array({ 1 }), sort, Array({ 1 }));//trivial
+	test(Array({ 1,2 }), sort, Array({ 1,2 }));
+	test(Array({ 1,2 }), sort, Array({ 2,1 }));
+	test(Array({ 1,1 }), sort, Array({ 1,1 }));
+
+	test(Array({ 1,1,1 }), sort, Array({ 1,1,1 }));
+	test(Array({ 1,2,3 }), sort, Array({ 1,2,3 }));
+	test(Array({ 1,2,3 }), sort, Array({ 3,2,1 }));
+	test(Array({ 1,2,3 }), sort, Array({ 2,3,1 }));
+
+	test(Array({ 0,1,5,5,6,7,8 }), sort, Array({ 8,5,1,7,6,0,5 }));
 }
 
 int main(int argc, char const *argv[])
