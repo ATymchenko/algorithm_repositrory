@@ -270,7 +270,6 @@ void naive_sort(TIter b, TIter e) {
 		for (auto j = i + 1; j < e; ++j) {
 			//[unsorted) = [i] U [i+1,j) U [j e)
 			assert(std::min_element(i, j) == i);
-
 			if (*j < *i) {
 				swap(*i, *j);
 			}
@@ -281,7 +280,7 @@ void naive_sort(TIter b, TIter e) {
 
 template<class TIter>
 void selection_sort1(TIter b, TIter e) {
-	for (auto i = b; i < e - 1; ++i) {
+	for (auto i = b; i < e; ++i) {
 		assert(std::is_sorted(b, i));
 		//[sorted) U [unsorted) = [b, i) U [i e)
 		swap(*i, *min_element1(i, e));
@@ -289,10 +288,34 @@ void selection_sort1(TIter b, TIter e) {
 	}
 }
 
-void test_select_sort() {
 
+
+template<class TIter>
+void bubble_sort1(TIter b, TIter e) {
+	if (b == e){
+		return;
+	}
+	TIter sorted_begin = e - 1;
+	while(b < sorted_begin) {
+		assert(sorted_begin < e);
+		assert(std::is_sorted(sorted_begin, e));
+		auto j = b;
+		while(j < sorted_begin) {
+			//assert(std::reverse_max_element(b, j + 1) == j);
+			if (*(j + 1) < *j) {
+				std::iter_swap(j + 1, j);
+			}
+			++j;
+			//assert(std::reverse_max_element(b, j + 1) == j);
+		}
+		--sorted_begin;
+		assert(std::is_sorted(sorted_begin, e));
+	}
+}
+
+void test_select_sort() {
 	typedef vector<int> Array;
-	auto sort = [](const vector<int>& v, int key) {
+	auto sort = [](const vector<int>& v) {
 		auto u = v;
 		selection_sort1(u.begin(), u.end());
 		return u;
@@ -312,16 +335,36 @@ void test_select_sort() {
 	test(Array({ 0,1,5,5,6,7,8 }), sort, Array({ 8,5,1,7,6,0,5 }));
 }
 
+void test_bubble_sort() {
+	typedef vector<int> Array;
+	auto sort = [](const vector<int>& v) {
+		auto u = v;
+		bubble_sort1(u.begin(), u.end());
+		return u;
+	};
+
+	test(Array(), sort, Array());//degenerate
+	test(Array({ 1 }), sort, Array({ 1 }));//trivial
+	test(Array({ 1,2 }), sort, Array({ 1,2 }));
+	test(Array({ 1,2 }), sort, Array({ 2,1 }));
+	test(Array({ 1,1 }), sort, Array({ 1,1 }));
+
+	test(Array({ 1,1,1 }), sort, Array({ 1,1,1 }));
+	test(Array({ 1,2,3 }), sort, Array({ 1,2,3 }));
+	test(Array({ 1,2,3 }), sort, Array({ 3,2,1 }));
+	test(Array({ 1,2,3 }), sort, Array({ 2,3,1 }));
+
+	test(Array({ 0,1,5,5,6,7,8 }), sort, Array({ 8,5,1,7,6,0,5 }));
+}
 int main(int argc, char const *argv[])
 {
 	//test_search();
 	//typedef std::vector<int> Array;
 	//test_binary_search();
-
-	const vector<int> v({ 1 ,2, 3, 4, 5, 6, 8, 9 });
-	cout << *min_element1(v.begin(), v.end());
+	//cout << *min_element1(v.begin(), v.end());
 	//cout << binary_search_lower_bound(v, 8);
-
+	test_select_sort();
+	test_bubble_sort();
 
 
 	return 0;
