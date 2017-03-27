@@ -248,17 +248,33 @@ void test_binary_search()
 	test(1, search, Array({ key, key, key + 1, key + 10 }), 0, 4, key);
 }
 
+template<class TIter>
+TIter min_element1(TIter b, TIter e) {
+	//[) = [processed)[current][unprocessed)
+	//result is min from [processed)
+	auto result = b;
+	while (b < e) {
+		if (*b < *result) {
+			result = b;
+		}
+		++b;
+	}
+	return result;
+}
 
 
 
 int main(int argc, char const *argv[])
 {
-	test_search();
-	typedef std::vector<int> Array;
-	test_binary_search();
+	//test_search();
+	//typedef std::vector<int> Array;
+	//test_binary_search();
 
-	//const vector<int> v({ 1 ,2, 3, 4, 5, 6, 8, 9 });
+	const vector<int> v({ 1 ,2, 3, 4, 5, 6, 8, 9 });
+	cout << *min_element1(v.begin(), v.end());
 	//cout << binary_search_lower_bound(v, 8);
+
+
 
 	return 0;
 }
