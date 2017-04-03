@@ -258,134 +258,218 @@ TIter min_element1(TIter b, TIter e) {
 			result = b;
 		}
 		++b;
-	}
-	return result;
-}
-
-template<class TIter>
-void naive_sort(TIter b, TIter e) {
-	for (auto i = b; i < e; ++i) {
-		assert(std::is_sorted(b, i));
-		//[sorted) U [unsorted) = [b, i) U [i e)
-		for (auto j = i + 1; j < e; ++j) {
-			//[unsorted) = [i] U [i+1,j) U [j e)
-			assert(std::min_element(i, j) == i);
-			if (*j < *i) {
-				swap(*i, *j);
-			}
-		}
-		assert(std::is_sorted(b, i + 1));
+		return result;
 	}
 }
 
-template<class TIter>
-void selection_sort1(TIter b, TIter e) {
-	for (auto i = b; i < e; ++i) {
-		assert(std::is_sorted(b, i));
-		//[sorted) U [unsorted) = [b, i) U [i e)
-		swap(*i, *min_element1(i, e));
-		assert(std::is_sorted(b, i + 1));
-	}
-}
-
-
-
-template<class TIter>
-void bubble_sort1(TIter b, TIter e) {
-	if (b == e){
-		return;
-	}
-	TIter sorted_begin = e - 1;
-	while(b < sorted_begin) {
-		assert(sorted_begin < e);
-		assert(std::is_sorted(sorted_begin, e));
-		auto j = b;
-		while(j < sorted_begin) {
-			//assert(std::reverse_max_element(b, j + 1) == j);
-			if (*(j + 1) < *j) {
-				std::iter_swap(j + 1, j);
-			}
-			++j;
-			//assert(std::reverse_max_element(b, j + 1) == j);
-		}
-		--sorted_begin;
-		assert(std::is_sorted(sorted_begin, e));
-	}
-}
-
-void test_select_sort() {
-	typedef vector<int> Array;
-	auto sort = [](const vector<int>& v) {
-		auto u = v;
-		selection_sort1(u.begin(), u.end());
-		return u;
-	};
-
-	test(Array(), sort, Array());//degenerate
-	test(Array({ 1 }), sort, Array({ 1 }));//trivial
-	test(Array({ 1,2 }), sort, Array({ 1,2 }));
-	test(Array({ 1,2 }), sort, Array({ 2,1 }));
-	test(Array({ 1,1 }), sort, Array({ 1,1 }));
-
-	test(Array({ 1,1,1 }), sort, Array({ 1,1,1 }));
-	test(Array({ 1,2,3 }), sort, Array({ 1,2,3 }));
-	test(Array({ 1,2,3 }), sort, Array({ 3,2,1 }));
-	test(Array({ 1,2,3 }), sort, Array({ 2,3,1 }));
-
-	test(Array({ 0,1,5,5,6,7,8 }), sort, Array({ 8,5,1,7,6,0,5 }));
-}
-
-void test_bubble_sort() {
-	typedef vector<int> Array;
-	auto sort = [](const vector<int>& v) {
-		auto u = v;
-		bubble_sort1(u.begin(), u.end());
-		return u;
-	};
-
-	test(Array(), sort, Array());//degenerate
-	test(Array({ 1 }), sort, Array({ 1 }));//trivial
-	test(Array({ 1,2 }), sort, Array({ 1,2 }));
-	test(Array({ 1,2 }), sort, Array({ 2,1 }));
-	test(Array({ 1,1 }), sort, Array({ 1,1 }));
-
-	test(Array({ 1,1,1 }), sort, Array({ 1,1,1 }));
-	test(Array({ 1,2,3 }), sort, Array({ 1,2,3 }));
-	test(Array({ 1,2,3 }), sort, Array({ 3,2,1 }));
-	test(Array({ 1,2,3 }), sort, Array({ 2,3,1 }));
-
-	test(Array({ 0,1,5,5,6,7,8 }), sort, Array({ 8,5,1,7,6,0,5 }));
-}
-
-template<class TIter>
-void selection_sort(TIter b, TIter e) {
-	auto pivot = b + 1;
-	while (pivot < e) {
-	  //[b,pivot)[pivot)[pivot+1,e)
-		assert(std::is_sorted(b, pivot));
-		auto i = pivot;
-		while (b<i && *i < *(i - 1) {
+	template<class TIter>
+	void naive_sort(TIter b, TIter e) {
+		for (auto i = b; i < e; ++i) {
 			assert(std::is_sorted(b, i));
-			assert(std::is_sorted(i, pivot));
-			std::iter(swap(i, i - 1));
-			--i;
+			//[sorted) U [unsorted) = [b, i) U [i e)
+			for (auto j = i + 1; j < e; ++j) {
+				//[unsorted) = [i] U [i+1,j) U [j e)
+				assert(std::min_element(i, j) == i);
+				if (*j < *i) {
+					swap(*i, *j);
+				}
+			}
+			assert(std::is_sorted(b, i + 1));
 		}
-		++pivot;
-		assert(std::is_sorted(b, pivot));
 	}
-}
+
+	template<class TIter>
+	void selection_sort1(TIter b, TIter e) {
+		for (auto i = b; i < e; ++i) {
+			assert(std::is_sorted(b, i));
+			//[sorted) U [unsorted) = [b, i) U [i e)
+			swap(*i, *min_element1(i, e));
+			assert(std::is_sorted(b, i + 1));
+		}
+	}
 
 
-int main(int argc, char const *argv[])
-{
-	//test_search();
-	//typedef std::vector<int> Array;
-	//test_binary_search();
-	//cout << *min_element1(v.begin(), v.end());
-	//cout << binary_search_lower_bound(v, 8);
-	test_select_sort();
-	test_bubble_sort();
+
+	template<class TIter>
+	void bubble_sort1(TIter b, TIter e) {
+		if (b == e) {
+			return;
+		}
+		TIter sorted_begin = e - 1;
+		while (b < sorted_begin) {
+			assert(sorted_begin < e);
+			assert(std::is_sorted(sorted_begin, e));
+			auto j = b;
+			while (j < sorted_begin) {
+				//assert(std::reverse_max_element(b, j + 1) == j);
+				if (*(j + 1) < *j) {
+					std::iter_swap(j + 1, j);
+				}
+				++j;
+				//assert(std::reverse_max_element(b, j + 1) == j);
+			}
+			--sorted_begin;
+			assert(std::is_sorted(sorted_begin, e));
+		}
+	}
+
+	void test_select_sort() {
+		typedef vector<int> Array;
+		auto sort = [](const vector<int>& v) {
+			auto u = v;
+			selection_sort1(u.begin(), u.end());
+			return u;
+		};
+
+		test(Array(), sort, Array());//degenerate
+		test(Array({ 1 }), sort, Array({ 1 }));//trivial
+		test(Array({ 1,2 }), sort, Array({ 1,2 }));
+		test(Array({ 1,2 }), sort, Array({ 2,1 }));
+		test(Array({ 1,1 }), sort, Array({ 1,1 }));
+
+		test(Array({ 1,1,1 }), sort, Array({ 1,1,1 }));
+		test(Array({ 1,2,3 }), sort, Array({ 1,2,3 }));
+		test(Array({ 1,2,3 }), sort, Array({ 3,2,1 }));
+		test(Array({ 1,2,3 }), sort, Array({ 2,3,1 }));
+
+		test(Array({ 0,1,5,5,6,7,8 }), sort, Array({ 8,5,1,7,6,0,5 }));
+	}
+
+	void test_bubble_sort() {
+		typedef vector<int> Array;
+		auto sort = [](const vector<int>& v) {
+			auto u = v;
+			bubble_sort1(u.begin(), u.end());
+			return u;
+		};
+
+		test(Array(), sort, Array());//degenerate
+		test(Array({ 1 }), sort, Array({ 1 }));//trivial
+		test(Array({ 1,2 }), sort, Array({ 1,2 }));
+		test(Array({ 1,2 }), sort, Array({ 2,1 }));
+		test(Array({ 1,1 }), sort, Array({ 1,1 }));
+
+		test(Array({ 1,1,1 }), sort, Array({ 1,1,1 }));
+		test(Array({ 1,2,3 }), sort, Array({ 1,2,3 }));
+		test(Array({ 1,2,3 }), sort, Array({ 3,2,1 }));
+		test(Array({ 1,2,3 }), sort, Array({ 2,3,1 }));
+
+		test(Array({ 0,1,5,5,6,7,8 }), sort, Array({ 8,5,1,7,6,0,5 }));
+	}
+
+	template <class TIter>
+	void selection_sort(TIter b, TIter e) {
+		for (auto i = b; i < e; ++i) {
+			// [sorted) U [unsorted) = [b, i) U [i e)
+			assert(is_sorted(b, i));
+			swap(*i, *min_element(i, e));
+		}
+	}
+
+	template <class TIter>
+	void insertion_sort(TIter b, TIter e) {
+
+		auto pivot = b + 1;
+		while (pivot < e) {
+			// [b, pivot) [pivot) [pivot+1, e)
+			assert(std::is_sorted(b, pivot));
+
+			auto i = pivot;
+			while (b < i && *i < *(i - 1)) {
+				assert(is_sorted(b, i) && is_sorted(i, pivot));
+				std::iter_swap(i, i - 1);
+				--i;
+				assert(is_sorted(b, i) && is_sorted(i, pivot));
+			}
+
+			++pivot;
+			assert(std::is_sorted(b, pivot));
+		}
+
+	}
 
 
-	return 0;
-}
+	template <class TIter>
+	void merge(TIter b, TIter m, TIter e, TIter buff) {
+		const auto size = e - b;
+		const auto old = buff;
+		const auto e1 = m;
+
+		while (b < e1 && m < e) {
+			*buff++ = *b < *m ? *b++ : *m++;
+		}
+		buff = copy(b, e1, buff);
+		buff = copy(m, e, buff);
+
+		assert(buff - old == size);
+	}
+
+	template <class TIter>
+	void merge_sort(TIter b, TIter e, TIter buff) {
+		auto size = e - b;
+		if (size > 1) {
+			auto m = b + size / 2;
+			merge_sort(b, m, buff);
+			merge_sort(m, e, buff + (size) / 2);
+			std::copy(buff, buff + size, b);
+			merge(b, m, e, buff);
+		}
+		else {
+			std::copy(b, e, buff);
+		}
+	}
+
+	template <class TIter>
+	void merge_sort2(TIter b, TIter e) {
+		std::vector<int> buff(e - b);
+		merge_sort(b, e, buff.begin());
+		copy(buff.begin(), buff.end(), b);
+	}
+
+
+
+
+	template <class TSorter>
+	void test_sorting(TSorter my_sort) {
+
+		typedef vector<int> Array;
+		auto sort = [my_sort](vector<int> u) {
+			my_sort(u.begin(), u.end());
+			return u;
+		};
+
+		test(Array(), sort, Array());       // degerate
+		test(Array({ 1 }), sort, Array({ 1 })); // trivial
+		test(Array({ 1, 2 }), sort, Array({ 1, 2 })); // trivial 2nd
+		test(Array({ 1, 2 }), sort, Array({ 2, 1 })); // trivial 2nd
+		test(Array({ 1, 1 }), sort, Array({ 1, 1 })); // trivial 2nd
+
+		test(Array({ 1, 1, 1 }), sort, Array({ 1, 1, 1 }));
+		test(Array({ 1, 2, 3 }), sort, Array({ 1, 2, 3 }));
+		test(Array({ 1, 2, 3 }), sort, Array({ 3, 2, 1 }));
+		test(Array({ 1, 2, 3 }), sort, Array({ 2, 3, 1 }));
+
+		test(Array({ 0, 1, 5, 5, 6, 7, 8 }),
+			sort, Array({ 8, 5, 1, 7, 6, 0, 5 }));
+
+	}
+
+	int main(int argc, char const *argv[])
+	{
+		//test_search();
+		//typedef std::vector<int> Array;
+		//test_binary_search();
+		//cout << *min_element1(v.begin(), v.end());
+		//cout << binary_search_lower_bound(v, 8);
+		//test_select_sort();
+		//test_bubble_sort();
+		typedef std::vector<int>::iterator Iter;
+		test_sorting(naive_sort<Iter>);
+		test_sorting(selection_sort<Iter>);
+		test_sorting(bubble_sort1<Iter>);
+		test_sorting(insertion_sort<Iter>);
+		test_sorting(merge_sort2<Iter>);
+
+
+		return 0;
+	}
