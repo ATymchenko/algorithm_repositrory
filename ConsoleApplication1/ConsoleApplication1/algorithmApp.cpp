@@ -334,7 +334,7 @@ void test_select_sort() {
 
 	test(Array({ 0,1,5,5,6,7,8 }), sort, Array({ 8,5,1,7,6,0,5 }));
 }
-
+// added test_bubble_sort
 void test_bubble_sort() {
 	typedef vector<int> Array;
 	auto sort = [](const vector<int>& v) {
