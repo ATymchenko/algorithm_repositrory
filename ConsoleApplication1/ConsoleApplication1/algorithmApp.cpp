@@ -365,7 +365,7 @@ void selection_sort(TIter b, TIter e) {
 		swap(*i, *min_element(i, e));
 	}
 }
-
+// added insertion_sort
 template <class TIter>
 void insertion_sort(TIter b, TIter e) {
 
