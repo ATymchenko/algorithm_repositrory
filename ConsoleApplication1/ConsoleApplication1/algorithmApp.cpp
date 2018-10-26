@@ -312,7 +312,7 @@ void bubble_sort1(TIter b, TIter e) {
 		assert(std::is_sorted(sorted_begin, e));
 	}
 }
-
+// added test_select_sort
 void test_select_sort() {
 	typedef vector<int> Array;
 	auto sort = [](const vector<int>& v) {
