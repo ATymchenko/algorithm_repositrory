@@ -356,7 +356,7 @@ void test_bubble_sort() {
 
 	test(Array({ 0,1,5,5,6,7,8 }), sort, Array({ 8,5,1,7,6,0,5 }));
 }
-
+// added selection_sort
 template <class TIter>
 void selection_sort(TIter b, TIter e) {
 	for (auto i = b; i < e; ++i) {
